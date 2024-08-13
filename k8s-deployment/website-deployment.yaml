@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: web-deployment
+  name: web-deployment
+  namespace: default
+spec:
+  replicas: 3
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: web-deployment
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: web-deployment
+    spec:
+      containers:
+      - image: sameerahmedbalaganur/web-ecomm:v1
+        imagePullPolicy: IfNotPresent
+        name: web-ecomm
+        env:
+        - name: DB_HOST
+          value: "mysql-service"
+        - name: DB_USER
+          value: ecomuser"
+        - name: DB_PASSWORD
+          value: "ecompassword"
+        - name: DB_NAME
+          value: "ecomdb"
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        ports:
+        - containerPort: 80
+      # dnsPolicy: ClusterFirst
+      restartPolicy: Always
