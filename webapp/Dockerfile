@@ -1,17 +1,21 @@
 FROM php:7.4-apache
 
 RUN apt-get update
-RUN apt-get install --yes --force-yes cron g++ gettext libicu-dev openssl libc-client-dev libkrb5-dev libxml2-dev libfreetype6-dev libgd-dev libmcrypt-dev bzip2 libbz2-dev libtidy-dev libcurl4-openssl-dev libz-dev libmemcached-dev libxslt-dev
 
-RUN a2enmod rewrite
+RUN apt-get update && apt-get install -y \
+  imagemagick \
+  libfreetype6-dev \
+  libjpeg62-turbo-dev \
+  libmagickwand-dev --no-install-recommends \
+  libpng-dev \
+  && rm -rf /var/lib/apt/lists/* \
+  && a2enmod rewrite \
+  && docker-php-ext-install exif \
+  && docker-php-ext-configure gd --with-freetype --with-jpeg && docker-php-ext-install -j$(nproc) gd \
+  && pecl install imagick && docker-php-ext-enable imagick \
+  && docker-php-ext-install mysqli \
+  && docker-php-ext-install pdo pdo_mysql
+COPY . /var/www/html/
 
-RUN docker-php-ext-install mysqli 
-RUN docker-php-ext-enable mysqli
-
-RUN docker-php-ext-configure gd --with-freetype=/usr --with-jpeg=/usr
-RUN docker-php-ext-install gd
-
-COPY ./ /var/www/html/
-COPY ./assets/db-load-script.sql /docker-entrypoint-initdb.d/
 
 EXPOSE 80
