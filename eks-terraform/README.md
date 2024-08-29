@@ -1,6 +1,6 @@
 # Terraform
 
-This section launches an EKS cluster with managed nodegroups. Also, varaibles.tf isn't present here (the value for cluster name is in terraform.tfvars file), but it will look this:
+This section launches an EKS cluster with managed nodegroups. Also, varaibles.tf isn't present here (the value for cluster name is in terraform.tfvars file which one can simply write.), but it will look this:
 
 
 ```
